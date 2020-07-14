@@ -24,8 +24,11 @@ FROM ubuntu
 # ENV SHRINE_ONT_PASSWORD=$SHRINE_ONT_PASSWORD
 # ENV SHRINE_ONT_USER=$SHRINE_ONT_USER
 
-RUN 	apt-get update \
-	&& 	apt-get install mysql-client -y \
+ENV TZ=Europe/Minsk
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+RUN     apt-get update \
+        && apt-get install mysql-client -y \
 	&&	apt-get install postgresql -y
 
 ADD ./installdata.sh /opt/installdata.sh

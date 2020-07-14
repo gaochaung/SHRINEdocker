@@ -1,10 +1,10 @@
-sudo docker-compose -f docker-compose-dataloader.yml build i2b2dataloader
-sudo docker-compose -f docker-compose-dataloader.yml run i2b2dataloader
-sudo docker-compose -f docker-compose-dataloader.yml rm --force i2b2dataloader
+docker-compose -f docker-compose-dataloader.yml build i2b2dataloader
+docker-compose -f docker-compose-dataloader.yml run i2b2dataloader
+docker-compose -f docker-compose-dataloader.yml rm --force i2b2dataloader
 
-sudo docker-compose -f docker-compose-dataloader.yml build usermanagement
-sudo docker-compose -f docker-compose-dataloader.yml run usermanagement /opt/resources/setI2b2Users.sh
-sudo docker-compose -f docker-compose-dataloader.yml rm --force usermanagement
+docker-compose -f docker-compose-dataloader.yml build usermanagement
+docker-compose -f docker-compose-dataloader.yml run usermanagement /opt/resources/setI2b2Users.sh
+docker-compose -f docker-compose-dataloader.yml rm --force usermanagement
 
 
 # source ./set_env.sh

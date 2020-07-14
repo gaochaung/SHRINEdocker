@@ -15,24 +15,24 @@ RUN chmod +x /opt/wget_proxy_setup.sh
 
 RUN /opt/wget_proxy_setup.sh
 
-RUN wget --no-cookies --no-check-certificate --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=a" "http://download.oracle.com/otn-pub/java/jdk/8u192-b12/750e1c8617c5452694857ad95c3ee230/jdk-8u192-linux-x64.tar.gz" \
+RUN wget https://github.com/gaochaung/SHRINEfile/raw/master/jdk-8u192-linux-x64.tar.gz \
 	&& tar xzf jdk-8u192-linux-x64.tar.gz
 
 RUN chown -R root: jdk1.8.0_*
 
 #-- for JAVA (in case you have another version of Java installed)
-RUN 	update-alternatives --install /usr/bin/java java /opt/java/jdk1.8.0_192/bin/java 1\
+RUN 	update-alternatives --install /usr/bin/java java /opt/java/jdk1.8.0_192/bin/java 1 \
 #-- for JAR (in case you have another version of Java installed)
-	&& 	update-alternatives --install /usr/bin/jar jar /opt/java/jdk1.8.0_192/bin/jar 1\
+	&& 	update-alternatives --install /usr/bin/jar jar /opt/java/jdk1.8.0_192/bin/jar 1 \
 #-- for JAVAC (in case you have another version of Java installed)
 	&& 	update-alternatives --install /usr/bin/javac javac /opt/java/jdk1.8.0_192/bin/javac 1 \
 	&&	update-alternatives --config javac  \
 	&& 	rm /opt/java/jdk-8u192*.tar.gz
 
 #-- setting JAVA variables
-RUN 	export JAVA_HOME=/opt/java/jdk1.8.0_172 \
-	&& 	export JRE_HOME=/opt/java/jdk1.8.0_172/jre \
-	&&	export PATH=$PATH:/opt/java/jdk1.8.0_172/bin:/opt/java/jdk1.8.0_172/jre/bin
+RUN 	export JAVA_HOME=/opt/java/jdk1.8.0_192 \
+	&& 	export JRE_HOME=/opt/java/jdk1.8.0_192/jre \
+	&&	export PATH=$PATH:/opt/java/jdk1.8.0_192/bin:/opt/java/jdk1.8.0_192/jre/bin
 
 # ENV KEYSTORE_ALIAS=$KEYSTORE_ALIAS
 # ENV KEYSTORE_HUMAN=$KEYSTORE_HUMAN
