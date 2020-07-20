@@ -126,7 +126,9 @@ RUN chmod +x /opt/shrine/tomcat/build_shrine.sh
 WORKDIR /opt/shrine/tomcat
 # RUN ./build_shrine.sh
 
-ADD ./tomcat/lib/AdapterMappings.csv /opt/shrine/tomcat/lib/AdapterMappings.csv
+WORKDIR /opt/shrine/tomcat/lib
+RUN wget -O AdapterMappings.csv  https://open.med.harvard.edu/svn/shrine-ontology/SHRINE_Demo_Downloads/trunk/AdapterMappings_i2b2_DemoData.csv --no-check-certificate 
+#ADD ./tomcat/lib/AdapterMappings.csv /opt/shrine/tomcat/lib/AdapterMappings.csv
 
 RUN echo $KEYSTORE_ALIAS
 
