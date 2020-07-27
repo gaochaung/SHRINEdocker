@@ -15,10 +15,16 @@ RUN chmod +x /opt/wget_proxy_setup.sh
 
 RUN /opt/wget_proxy_setup.sh
 
+<<<<<<< HEAD
 #RUN wget https://github.com/gaochaung/SHRINEfile/raw/master/jdk-8u192-linux-x64.tar.gz \
 #	&& tar xzf jdk-8u192-linux-x64.tar.gz
 
 ADD ./ressources/jdk-8u192-linux-x64.tar.gz /opt/java/jdk-8u192-linux-x64.tar.gz
+=======
+ADD ./ressources/jdk-8u192-linux-x64.tar.gz /opt/java/jdk-8u192-linux-x64.tar.gz
+#RUN tar xzf /opt/java/jdk-8u192-linux-x64.tar.gz -C /opt/java
+
+>>>>>>> dd0f6b5afa697d1938e382359c3cd702989ae859
 RUN mv /opt/java/jdk-8u192-linux-x64.tar.gz/jdk1.8.0_192 /opt/java
 
 RUN chown -R root: jdk1.8.0_*
@@ -29,7 +35,12 @@ RUN 	update-alternatives --install /usr/bin/java java /opt/java/jdk1.8.0_192/bin
 	&& 	update-alternatives --install /usr/bin/jar jar /opt/java/jdk1.8.0_192/bin/jar 1 \
 #-- for JAVAC (in case you have another version of Java installed)
 	&& 	update-alternatives --install /usr/bin/javac javac /opt/java/jdk1.8.0_192/bin/javac 1 \
+<<<<<<< HEAD
 	&&	update-alternatives --config javac  
+=======
+	&&	update-alternatives --config javac 
+
+>>>>>>> dd0f6b5afa697d1938e382359c3cd702989ae859
 
 #-- setting JAVA variables
 RUN 	export JAVA_HOME=/opt/java/jdk1.8.0_192 \
@@ -159,4 +170,8 @@ RUN echo 'false'>deployed
 
 ENV HUB=false
 
+<<<<<<< HEAD
 ENTRYPOINT ["/opt/shrine/start.sh"]	
+=======
+ENTRYPOINT ["/opt/shrine/start.sh"]	&& 	rm /opt/java/jdk-8u192*.tar.gz
+>>>>>>> dd0f6b5afa697d1938e382359c3cd702989ae859
