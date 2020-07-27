@@ -15,8 +15,11 @@ RUN chmod +x /opt/wget_proxy_setup.sh
 
 RUN /opt/wget_proxy_setup.sh
 
-RUN wget https://github.com/gaochaung/SHRINEfile/raw/master/jdk-8u192-linux-x64.tar.gz \
-	&& tar xzf jdk-8u192-linux-x64.tar.gz
+#RUN wget https://github.com/gaochaung/SHRINEfile/raw/master/jdk-8u192-linux-x64.tar.gz \
+#	&& tar xzf jdk-8u192-linux-x64.tar.gz
+
+ADD ./ressources/jdk-8u192-linux-x64.tar.gz /opt/java/jdk-8u192-linux-x64.tar.gz
+RUN mv /opt/java/jdk-8u192-linux-x64.tar.gz/jdk1.8.0_192 /opt/java
 
 RUN chown -R root: jdk1.8.0_*
 
@@ -26,8 +29,7 @@ RUN 	update-alternatives --install /usr/bin/java java /opt/java/jdk1.8.0_192/bin
 	&& 	update-alternatives --install /usr/bin/jar jar /opt/java/jdk1.8.0_192/bin/jar 1 \
 #-- for JAVAC (in case you have another version of Java installed)
 	&& 	update-alternatives --install /usr/bin/javac javac /opt/java/jdk1.8.0_192/bin/javac 1 \
-	&&	update-alternatives --config javac  \
-	&& 	rm /opt/java/jdk-8u192*.tar.gz
+	&&	update-alternatives --config javac  
 
 #-- setting JAVA variables
 RUN 	export JAVA_HOME=/opt/java/jdk1.8.0_192 \
@@ -87,7 +89,7 @@ RUN mkdir -p /opt/shrine/tomcat
 
 RUN 	wget https://archive.apache.org/dist/tomcat/tomcat-8/v8.5.28/bin/apache-tomcat-8.5.28.tar.gz \
 	&&	tar xvf apache-tomcat-8.5.28.tar.gz -C /opt/shrine/tomcat --strip-components=1
-
+ADD ./ressources/AdapterMappings.csv /opt/shrine/tomcat/lib/AdapterMappings.csv
 
 
 WORKDIR /opt/shrine/tomcat
@@ -127,8 +129,9 @@ WORKDIR /opt/shrine/tomcat
 # RUN ./build_shrine.sh
 
 WORKDIR /opt/shrine/tomcat/lib
-RUN wget -O AdapterMappings.csv  https://open.med.harvard.edu/svn/shrine-ontology/SHRINE_Demo_Downloads/trunk/AdapterMappings_i2b2_DemoData.csv --no-check-certificate 
+#RUN wget -O AdapterMappings.csv  https://open.med.harvard.edu/svn/shrine-ontology/SHRINE_Demo_Downloads/trunk/AdapterMappings_i2b2_DemoData.csv --no-check-certificate 
 #ADD ./tomcat/lib/AdapterMappings.csv /opt/shrine/tomcat/lib/AdapterMappings.csv
+
 
 RUN echo $KEYSTORE_ALIAS
 
@@ -156,4 +159,4 @@ RUN echo 'false'>deployed
 
 ENV HUB=false
 
-ENTRYPOINT ["/opt/shrine/start.sh"]
+ENTRYPOINT ["/opt/shrine/start.sh"]	

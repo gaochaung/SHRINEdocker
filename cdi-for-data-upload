@@ -1,0 +1,94 @@
+#/bin/bash
+#@Kavishwar Wagholikar <waghsk@gmail.com>
+# Using getopts from docker container, as it may not be available on mac and freebsd
+G='docker exec -it centos-zip /bin/sh -c'
+
+
+function usage {
+   echo "usage: cdi [-d or --delete-data] [-c or --load-concepts] [-f or --load-facts] [-i or --start-i2b2] [-C or --start-cdi] [-I or --reset-i2b2] "
+}
+
+
+
+Y=$(docker ps -a |grep 'centos-zip'|wc -l)
+if [ "$Y" -eq 0 ]
+then
+  echo 'creating container for zip'
+  docker-compose up -d centos-zip
+fi
+
+
+TEMP=` $G "getopt -o iIcfvdm: --long start-i2b2,delete-data,start-cdi,load-concepts,load-facts,reset-i2b2,verbose,debug,memory:,debugfile:,minheap:,maxheap: -n 'javawrap' -- $@"`
+
+if [ $? != 0 ] ; then usage >&2 ; exit 1 ; fi
+
+
+# Note the quotes around `$TEMP': they are essential!
+eval set -- "$TEMP"
+
+VERBOSE=false
+DEBUG=false
+MEMORY=
+DEBUGFILE=
+JAVA_MISC_OPT=
+START_I2B2=false
+DELETE_DATA=false
+START_CDI=false
+LOAD_CONCEPTS=false
+LOAD_FACTS=false
+I2B2_RESET=false
+while true; do
+  case "$1" in
+    
+    -v | --verbose ) VERBOSE=true; echo '..verbose'; shift ;;
+    -i | --start-i2b2 ) START_I2B2=true;  shift ;;
+    -d | --delete-data ) DELETE_DATA=true;  shift ;;
+    -C | --start-cdi ) START_CDI=true;  shift ;;
+    -c | --load-concepts ) LOAD_CONCEPTS=true;   shift ;;
+    -f | --load-facts ) LOAD_FACTS=true;   shift ;;
+    -I | --reset-i2b2 ) I2B2_RESET=true;   shift ;;
+    -e | --debug ) echo 'debug';  shift ;;
+    -m | --memory ) MEMORY="$2"; shift 2 ;;
+    --debugfile ) DEBUGFILE="$2"; shift 2 ;;
+    --minheap )
+      JAVA_MISC_OPT="$JAVA_MISC_OPT -XX:MinHeapFreeRatio=$2"; shift 2 ;;
+    --maxheap )
+      JAVA_MISC_OPT="$JAVA_MISC_OPT -XX:MaxHeapFreeRatio=$2"; shift 2 ;;
+    -- ) shift; break ;;
+    * )  break ;;
+  esac
+done
+
+#echo "DELETE_DATA $DELETE_DATA"
+
+if [ "$START_I2B2" = true ]; then
+	echo 'starting i2b2 docker containers..'
+	docker-compose up -d i2b2-pg i2b2-web i2b2-wildfly
+elif [ "$DELETE_DATA" = true ]; then
+	echo 'deleting concepts and facts from i2b2 instance'
+	docker-compose up i2b2-python-delete-data
+elif [ "$START_CDI" = true ]; then
+	echo 'starting CDI docker containers..'
+	docker-compose up -d i2b2-cdi-sftp i2b2-cdi-pg i2b2-cdi-app
+elif [ "$LOAD_CONCEPTS" = true ] ; then
+	echo 'loading concepts..'
+	docker exec -it centos-zip /bin/sh -c "cd /to_zip; rm -rf tmp; mkdir -p tmp/CONCEPT; cp -r concepts/* tmp/CONCEPT/;"
+	docker exec -it centos-zip /bin/sh -c "cd /to_zip/tmp;zip -r CONCEPT.zip CONCEPT"
+	docker cp tmp/CONCEPT.zip i2b2-cdi-sftp:/home/i2b2sftpuser/concept/
+	#docker exec -it centos-zip /bin/sh -c "cd /to_zip;zip -r CONCEPT.zip CONCEPT"
+	#docker cp CONCEPT.zip i2b2-cdi-sftp:/home/i2b2sftpuser/concept/
+elif [ "$LOAD_FACTS" = true ] ; then
+	echo 'loading facts..'
+	docker exec -it centos-zip /bin/sh -c "cd /to_zip; rm -rf tmp;mkdir -p tmp/DATA; cp -r facts/* tmp/DATA/;"
+	docker exec -it centos-zip /bin/sh -c "cd /to_zip/tmp;zip -r DATA.zip DATA"
+	docker cp tmp/DATA.zip i2b2-cdi-sftp:/home/i2b2sftpuser/data/
+	#docker exec -it centos-zip /bin/sh -c "cd /to_zip;zip -r DATA.zip DATA"
+	#docker cp DATA.zip i2b2-cdi-sftp:/home/i2b2sftpuser/data/
+ 
+elif [ "$I2B2_RESET" = true ] ; then
+	echo 'reseting i2b2 containers..'
+	docker system prune --volumes
+else
+	echo 
+	
+fi
