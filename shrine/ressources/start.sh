@@ -15,10 +15,10 @@ else
   echo 'Already deployed true'
 fi
 
-if [ "$HUB" = "false" ]; then
-  wget -O AdapterMappings.csv  https://open.med.harvard.edu/svn/shrine-ontology/SHRINE_Demo_Downloads/trunk/AdapterMappings_i2b2_DemoData.csv --no-check-certificate
-  mv AdapterMappings.csv /opt/shrine/tomcat/lib/
-fi
+#if [ "$HUB" = "false" ]; then
+#  wget -O AdapterMappings.csv  https://open.med.harvard.edu/svn/shrine-ontology/SHRINE_Demo_Downloads/trunk/AdapterMappings_i2b2_DemoData.csv --no-check-certificate
+#  mv AdapterMappings.csv /opt/shrine/tomcat/lib/
+#fi
 
 
 /opt/shrine/tomcat/bin/catalina.sh run

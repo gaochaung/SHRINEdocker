@@ -1,15 +1,4 @@
-FROM ubuntu:18.04
-
-ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get update
-RUN apt-get install unzip apache2 -y
-RUN apt-get update
-RUN apt-get install php7.2 curl -y
-RUN apt-get install php7.2-curl -y
-RUN apt-get install libapache2-mod-php7.2 -y
-
-RUN a2enmod php7.2
-RUN a2enmod rewrite
+FROM webserver_base
 
 ADD ./webclient/i2b2webclient-1710.zip /opt/i2b2webclient-1710.zip
 #RUN unzip /opt/i2b2webclient-1710.zip -d /var/www/html
@@ -33,3 +22,4 @@ RUN touch deployed
 RUN echo 'false'>deployed
 
 ENTRYPOINT ["./start.sh"]
+
